@@ -1,6 +1,14 @@
-import { Controller, Post, Body, Get, Param, Patch, Delete } from "@nestjs/common";
+import {
+    Controller,
+    Body,
+    Delete,
+    Get,
+    Param,
+    Patch,
+    Post,
+} from "@nestjs/common";
 import { ProductsService } from "./products.service";
-import { Product } from "./product.model";
+import { Product, ImageList } from "./product.model";
 
 @Controller('products')
 export class ProductsController {
@@ -12,8 +20,10 @@ export class ProductsController {
         @Body('title') prodTitle: string, 
         @Body('description') prodDesc: string,
         @Body('price') prodPrice: number, 
+        @Body('images') prodImages: ImageList[], 
+        @Body('code') prodCode: string, 
     ): Promise<Product> {
-        const addedProduct = await this.productService.insertProduct(prodTitle, prodDesc, prodPrice);
+        const addedProduct = await this.productService.insertProduct(prodTitle, prodDesc, prodPrice, prodImages, prodCode);
         return addedProduct; 
     }
 
@@ -33,9 +43,11 @@ export class ProductsController {
         @Param('id') productId: string,
         @Body('title') prodTitle: string,
         @Body('description') prodDescription: string,
-        @Body('price') prodPrice: number,
+        @Body('price') prodPrice: number, 
+        @Body('images') prodImages: ImageList[], 
+        @Body('code') prodCode: string, 
     ) {
-        const updatedProduct = await this.productService.updateProduct(productId, prodTitle, prodDescription, prodPrice);
+        const updatedProduct = await this.productService.updateProduct(productId, prodTitle, prodDescription, prodPrice, prodImages, prodCode);
         return updatedProduct;
     }
 
@@ -44,4 +56,5 @@ export class ProductsController {
         await this.productService.deleteProduct(productId);
         return null;
     }
+
 }

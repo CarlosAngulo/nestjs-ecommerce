@@ -2,18 +2,20 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 
-import { Product } from "./product.model";
+import { Product, ImageList } from "./product.model";
 
 @Injectable()
 export class ProductsService {
-    
+
     constructor(@InjectModel('Product') private readonly productModel: Model<Product>) {}
 
-    async insertProduct(title: string, description: string, price: number) {
+    async insertProduct(title: string, description: string, price: number, images: ImageList[], code: string) {
         const newProduct = new this.productModel({
             title,
             description,
-            price
+            price,
+            images,
+            code
         });
         const result = await newProduct.save();
         return result;
@@ -25,7 +27,9 @@ export class ProductsService {
             id: product.id,
             title: product.title,
             description: product.description,
-            price: product.price
+            price: product.price,
+            images: product.images,
+            code: product.code
         }));
     }
 
@@ -35,11 +39,13 @@ export class ProductsService {
             id: product.id,
             title: product.title,
             description: product.description,
-            price: product.price
+            price: product.price,
+            images: product.images,
+            code: product.code
         };
     }
 
-    async updateProduct (productId: string, title: string, description: string, price: number) {
+    async updateProduct (productId: string, title: string, description: string, price: number, images: ImageList[], code: string) {
         const updatedProduct = await this.findProduct(productId);
         if (title) {
             updatedProduct.title = title;
@@ -50,7 +56,12 @@ export class ProductsService {
         if (price) {
             updatedProduct.price = price;
         }
-        console.log(updatedProduct);
+        if (images) {
+            updatedProduct.images = images;
+        }
+        if (code) {
+            updatedProduct.code = code;
+        }
         updatedProduct.save();
         return updatedProduct;
     }
