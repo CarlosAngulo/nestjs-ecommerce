@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
@@ -6,13 +7,23 @@ import { AppService } from './app.service';
 import { FileManagerModule } from './filemanager/filemanager.module';
 import { ProductModule } from './products/product.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { AuthModule } from './auth/auth.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
-  imports: [ProductModule, MongooseModule.forRoot(
-      'mongodb+srv://test:1029384756@cluster0-bafdm.mongodb.net/test-ecommerce?retryWrites=true&w=majority'
+  imports: [
+    ProductModule, 
+    MongooseModule.forRoot(
+      process.env.MONGO_URI, 
+      {
+        useNewUrlParser: true, 
+        useUnifiedTopology: true
+      }
     ),
-    MulterModule.register({dest: './files'}),
-    FileManagerModule
+    MulterModule.register({dest: process.env.FILES}),
+    FileManagerModule,
+    AuthModule,
+    SharedModule
   ],
   controllers: [AppController],
   providers: [AppService],
